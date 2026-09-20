@@ -1,0 +1,146 @@
+{
+  "files": [
+    {
+      "bytes": 3310,
+      "path": "GestaltEdit/AutomationCommand.swift",
+      "sha256": "3bf6e992555c1e78f6ee1a93de7150c5873f325ae8074492d64f2106f59c4457"
+    },
+    {
+      "bytes": 1217,
+      "path": "GestaltEdit/BadQueryBridge.h",
+      "sha256": "e0846759f0d91087ec6588fe836f1b0b22874179d5675ab318b3982d2d3b6428"
+    },
+    {
+      "bytes": 7042,
+      "path": "GestaltEdit/BadQueryBridge.m",
+      "sha256": "96997efa752bac52dabd9b92e6bba1b7136529a9110da9782a4d4fab5a63337b"
+    },
+    {
+      "bytes": 37046,
+      "path": "GestaltEdit/ContentView.swift",
+      "sha256": "e40063653cd831adfccf81f98994d3f26342125a0eb30e125237fd3b04a0e500"
+    },
+    {
+      "bytes": 2334,
+      "path": "GestaltEdit/GestaltAccess.h",
+      "sha256": "2ccee6197d43765528cf25b52139dedac422b81757d9219fe239bc14cb946cd5"
+    },
+    {
+      "bytes": 15993,
+      "path": "GestaltEdit/GestaltAccess.m",
+      "sha256": "169d41a7bb97d895cffddd8b6cd456ff1ce2b37dfa05809392d078a4136bffa4"
+    },
+    {
+      "bytes": 2290,
+      "path": "GestaltEdit/GestaltBackupStore.swift",
+      "sha256": "d220d83d1db8394adda1e4e5eba92de225e2523b0a4eb19573c11a9e5df35c75"
+    },
+    {
+      "bytes": 67,
+      "path": "GestaltEdit/GestaltEdit-Bridging-Header.h",
+      "sha256": "45087d7e92df0814de44c881479a573b38f219208820423de1b0834921f89b56"
+    },
+    {
+      "bytes": 359,
+      "path": "GestaltEdit/GestaltEditApp.swift",
+      "sha256": "45fedcdeaaf028e26d50a028a5794c6c0c85eeec8c8be542d2c34a43d22d00f8"
+    },
+    {
+      "bytes": 14467,
+      "path": "GestaltEdit/GestaltModels.swift",
+      "sha256": "6de7d2cb7ba96e34e463d3cb78d8c4f33782fbd5d259408698721ea9df47274e"
+    },
+    {
+      "bytes": 11008,
+      "path": "GestaltEdit/GestaltTweaks.swift",
+      "sha256": "f5278d54fe1d4b50ddd70e6af164174683286a19fee5eb38f8f645f5f87e809b"
+    },
+    {
+      "bytes": 11238,
+      "path": "GestaltEdit/GestaltViewModel.swift",
+      "sha256": "7d37cd0403ce5daeabd6b11a06959c69ffc61961e03fce254bbcc00e413efaca"
+    },
+    {
+      "bytes": 2726,
+      "path": "GestaltEdit/NeoSpringView.swift",
+      "sha256": "f5981591c98d00b235fc8d0b47992ce0710d05fb2b9311e6a45492962a553595"
+    },
+    {
+      "bytes": 23675,
+      "path": "GestaltEdit/PlacardIcon.png",
+      "sha256": "00d528568ccffc509625eb80247c9b680c17aa5e54c75e797f792ab5898cd320"
+    },
+    {
+      "bytes": 5246,
+      "path": "GestaltEdit/ResearchProbeAssessment.swift",
+      "sha256": "d6e3c275e5f1e16e709bcddbb4b3bc698a379935e644dce33b17294301f9508e"
+    },
+    {
+      "bytes": 3678,
+      "path": "GestaltEdit/ResearchProbeResult.swift",
+      "sha256": "8f9de4e25af574eb7f4b43a850814040f5128ecd5c85db6da08ca1225a1b4024"
+    },
+    {
+      "bytes": 37654,
+      "path": "GestaltEdit/RewardCode.jpg",
+      "sha256": "92368f413af9f956196f0444c05f84f726775e52f4bc9dcf3185b3a7d1618259"
+    },
+    {
+      "bytes": 2143,
+      "path": "GestaltEdit/SUSSAvatar.jpg",
+      "sha256": "46b847837ddffeabbd4ee0ae81d735a5519c324811ce5d5af899081d12815d5d"
+    },
+    {
+      "bytes": 10285,
+      "path": "GestaltEdit/zh-Hans.lproj/Localizable.strings",
+      "sha256": "77836043c6e5571689adcd6bb6911911e5c8558490690f005e1e0c37b8c6561f"
+    },
+    {
+      "bytes": 13894,
+      "path": "GestaltEdit.xcodeproj/project.pbxproj",
+      "sha256": "e2964878af1d5718f7edd1f95ac40ab4807a89d33a5172c3801c149cde4f97cd"
+    },
+    {
+      "bytes": 135,
+      "path": "GestaltEdit.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+      "sha256": "7f3b00b5c3fdb45242d7b87e1e5c4e25d1fa8129a16c94295ecc4e8ea2235c5f"
+    },
+    {
+      "bytes": 1781,
+      "path": ".github/workflows/gestaltedit-next-ci.yml",
+      "sha256": "0afa34ddfea11585003d6cee0b2e8dcafeda1c921191b8d9eb2b5ef12ab0f721"
+    },
+    {
+      "bytes": 1395,
+      "path": ".github/workflows/release-unsigned.yml",
+      "sha256": "8cc2ce609929e2783fb17a2ae8ae6fd0fa1062f6c106f0c2bbe164c7ac4e67ed"
+    },
+    {
+      "bytes": 1289,
+      "path": "tools/audit_research_mode.py",
+      "sha256": "a336176d26e48096fe0888c2688b40bc8b1d9bc01e54ade5181080429affbb48"
+    },
+    {
+      "bytes": 665,
+      "path": "tools/package_source.py",
+      "sha256": "28369f01e5f3b79963c46169a63632c32f2f603b4a2a3c87f4e2974f0d20fa07"
+    },
+    {
+      "bytes": 3184,
+      "path": "tools/preflight.py",
+      "sha256": "a113b97ca3ea36559b31d36f1738f6fb5c6bf02d4368af3ef023dad5aec1189f"
+    },
+    {
+      "bytes": 1630,
+      "path": "tools/test_probe_contract.py",
+      "sha256": "4baa2f033b7abfb99cf54151e05d358051783ab2852b32a3b0ebc1f31b136a67"
+    },
+    {
+      "bytes": 964,
+      "path": "tools/tree_manifest.py",
+      "sha256": "2585920ad295feb459cd456d99896d99e350f47b80f7b2dc6e4d55c0476b68cc"
+    }
+  ],
+  "internalVersion": "0.13",
+  "project": "GestaltEdit Next"
+}
