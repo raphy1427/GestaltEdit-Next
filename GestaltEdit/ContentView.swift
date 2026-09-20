@@ -43,6 +43,7 @@ private struct ResearchModeView: View {
     @State private var isProbing = false
     @State private var copiedReport = false
     @State private var copiedJSON = false
+    @State private var copiedSummary = false
 
     private var primitiveStatus: String {
         guard GestaltAccess.isLegacyAccessPrimitiveAvailable() else { return "Unavailable" }
@@ -137,6 +138,7 @@ private struct ResearchModeView: View {
                             UIPasteboard.general.string = probe.textReport
                             copiedReport = true
                             copiedJSON = false
+                            copiedSummary = false
                         } label: {
                             Label(copiedReport ? "Report Copied" : "Copy Diagnostic Report",
                                   systemImage: copiedReport ? "checkmark" : "doc.on.doc")
@@ -146,9 +148,20 @@ private struct ResearchModeView: View {
                             UIPasteboard.general.string = probe.jsonReport
                             copiedJSON = true
                             copiedReport = false
+                            copiedSummary = false
                         } label: {
                             Label(copiedJSON ? "JSON Copied" : "Copy JSON Report",
                                   systemImage: copiedJSON ? "checkmark" : "curlybraces")
+                        }
+
+                        Button {
+                            UIPasteboard.general.string = probe.compactSummary
+                            copiedSummary = true
+                            copiedReport = false
+                            copiedJSON = false
+                        } label: {
+                            Label(copiedSummary ? "Summary Copied" : "Copy Hardware Test Summary",
+                                  systemImage: copiedSummary ? "checkmark" : "list.clipboard")
                         }
                     }
                 }
@@ -182,6 +195,12 @@ private struct ResearchModeView: View {
                     }
                 }
 
+                Section("Hardware Test Protocol") {
+                    Text("1. Confirm this screen says Verified write support: No.\n2. Run the read-only probe once.\n3. Save the report or JSON before changing anything else.\n4. Do not use the tweak editor on this unsupported build.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
                 Section("Safety") {
                     Text("Research Mode contains no write test. A successful read probe only proves that this build still allows some read access; it does not mean MobileGestalt modifications are safe or supported.")
                         .foregroundStyle(.secondary)
@@ -196,6 +215,7 @@ private struct ResearchModeView: View {
         isProbing = true
         copiedReport = false
         copiedJSON = false
+        copiedSummary = false
 
         DispatchQueue.global(qos: .userInitiated).async {
             let raw = GestaltAccess.shared().runReadOnlyProbe() as? [String: Any] ?? [:]

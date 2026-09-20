@@ -72,3 +72,8 @@ Diagnostic reports now include the app marketing version and build number, makin
 ### First hardware-test gate
 
 At this point the next unknown cannot be resolved statically: the post-beta-4 device must execute the read-only probe so we can see which private-access stage actually fails. Before that test, the Xcode 27 CI build should pass. The first device test must use Research Mode only; no MobileGestalt write path is enabled on the unsupported build.
+
+
+## Internal milestone 0.14 — Hardware-test provenance + compact summary
+
+Research Mode now gives every probe run a unique run ID and UTC timestamp, includes both in text/JSON exports, and adds a compact hardware-test summary for quickly sending the exact device/build/result without exposing MobileGestalt contents. The screen also includes an explicit four-step hardware-test protocol so unsupported builds are tested consistently. Build number is now 10. No write behavior was added or enabled.

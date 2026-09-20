@@ -16,9 +16,9 @@
       "sha256": "96997efa752bac52dabd9b92e6bba1b7136529a9110da9782a4d4fab5a63337b"
     },
     {
-      "bytes": 37046,
+      "bytes": 38135,
       "path": "GestaltEdit/ContentView.swift",
-      "sha256": "e40063653cd831adfccf81f98994d3f26342125a0eb30e125237fd3b04a0e500"
+      "sha256": "70804d319f9dab498f6968fe63870340036f698d0a107f3ef52010a1ee2ef054"
     },
     {
       "bytes": 2334,
@@ -76,9 +76,9 @@
       "sha256": "d6e3c275e5f1e16e709bcddbb4b3bc698a379935e644dce33b17294301f9508e"
     },
     {
-      "bytes": 3678,
+      "bytes": 4900,
       "path": "GestaltEdit/ResearchProbeResult.swift",
-      "sha256": "8f9de4e25af574eb7f4b43a850814040f5128ecd5c85db6da08ca1225a1b4024"
+      "sha256": "b8b3a08aa7e191f5a8999af77f714783119bfa4dd326969532046de9125dfe65"
     },
     {
       "bytes": 37654,
@@ -96,9 +96,9 @@
       "sha256": "77836043c6e5571689adcd6bb6911911e5c8558490690f005e1e0c37b8c6561f"
     },
     {
-      "bytes": 13894,
+      "bytes": 13896,
       "path": "GestaltEdit.xcodeproj/project.pbxproj",
-      "sha256": "e2964878af1d5718f7edd1f95ac40ab4807a89d33a5172c3801c149cde4f97cd"
+      "sha256": "74600c6fbbc16de8e5765f16415ea725a94e6c410668d9653efa295aea8cc60b"
     },
     {
       "bytes": 135,
@@ -131,9 +131,9 @@
       "sha256": "a113b97ca3ea36559b31d36f1738f6fb5c6bf02d4368af3ef023dad5aec1189f"
     },
     {
-      "bytes": 1630,
+      "bytes": 1858,
       "path": "tools/test_probe_contract.py",
-      "sha256": "4baa2f033b7abfb99cf54151e05d358051783ab2852b32a3b0ebc1f31b136a67"
+      "sha256": "4ccdaab8411dce6c93e468892cdc2a4d53c01f4bbb18c7a060f072ca2df3b3e8"
     },
     {
       "bytes": 964,
@@ -141,6 +141,6 @@
       "sha256": "2585920ad295feb459cd456d99896d99e350f47b80f7b2dc6e4d55c0476b68cc"
     }
   ],
-  "internalVersion": "0.13",
+  "internalVersion": "0.14",
   "project": "GestaltEdit Next"
 }

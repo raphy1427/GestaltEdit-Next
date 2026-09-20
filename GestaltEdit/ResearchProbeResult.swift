@@ -2,6 +2,14 @@ import Foundation
 
 struct ResearchProbeResult {
     let raw: [String: Any]
+    let runID: UUID
+    let generatedAt: Date
+
+    init(raw: [String: Any], runID: UUID = UUID(), generatedAt: Date = Date()) {
+        self.raw = raw
+        self.runID = runID
+        self.generatedAt = generatedAt
+    }
 
     var schemaVersion: Int { (raw["schemaVersion"] as? NSNumber)?.intValue ?? 1 }
     var stage: String { raw["stage"] as? String ?? "unknown" }
@@ -29,6 +37,8 @@ struct ResearchProbeResult {
         let appBuild = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unknown"
         var lines = [
             "GestaltEdit Next Research Report",
+            "Run ID: \(runID.uuidString)",
+            "Generated: \(Self.iso8601.string(from: generatedAt))",
             "App: \(appVersion) (\(appBuild))",
             "Schema: \(schemaVersion)",
             "Device: \(string("device", fallback: GestaltAccess.currentDeviceIdentifier()))",
@@ -61,6 +71,8 @@ struct ResearchProbeResult {
     var jsonReport: String {
         var export = raw
         export["reportType"] = "GestaltEditNextResearchProbe"
+        export["runID"] = runID.uuidString
+        export["generatedAt"] = Self.iso8601.string(from: generatedAt)
         export["appVersion"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown"
         export["appBuild"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unknown"
         export["verifiedWriteSupport"] = false
@@ -73,6 +85,25 @@ struct ResearchProbeResult {
         }
         return string
     }
+
+    var compactSummary: String {
+        let assessment = ResearchProbeAssessment.evaluate(self)
+        return [
+            "GestaltEdit Next hardware test",
+            "Run: \(runID.uuidString)",
+            "iOS: \(string("osVersion", fallback: GestaltAccess.currentOSVersionString()))",
+            "Build: \(string("build", fallback: GestaltAccess.currentOSBuild()))",
+            "Result: \(summary)",
+            "Assessment: \(assessment.title)",
+            "Write attempted: \(yesNo(writeAttempted))"
+        ].joined(separator: "\n")
+    }
+
+    private static let iso8601: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
 
     private func string(_ key: String, fallback: String) -> String {
         (raw[key] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? fallback
