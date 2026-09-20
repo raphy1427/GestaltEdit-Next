@@ -572,6 +572,7 @@ private struct TweakToggle: View {
 private struct BackupLibrary: View {
     @EnvironmentObject private var viewModel: GestaltViewModel
     @State private var backupToRestore: GestaltBackup?
+    @State private var backupToInspect: GestaltBackup?
     @State private var showsBackupImporter = false
 
     var body: some View {
@@ -601,9 +602,11 @@ private struct BackupLibrary: View {
                             .foregroundStyle(.secondary)
                     } else {
                         ForEach(viewModel.backups) { backup in
-                            BackupRow(backup: backup) {
-                                backupToRestore = backup
-                            }
+                            BackupRow(
+                                backup: backup,
+                                inspect: { backupToInspect = backup },
+                                restore: { backupToRestore = backup }
+                            )
                         }
                         .onDelete { offsets in
                             for index in offsets { viewModel.delete(viewModel.backups[index]) }
@@ -625,6 +628,13 @@ private struct BackupLibrary: View {
                 case .failure(let error):
                     viewModel.notice = GestaltNotice(kind: .error, message: error.localizedDescription)
                 }
+            }
+            .sheet(item: $backupToInspect) { backup in
+                BackupDetailView(backup: backup) {
+                    backupToInspect = nil
+                    backupToRestore = backup
+                }
+                .presentationDetents([.medium, .large])
             }
             .confirmationDialog(
                 "Restore This MobileGestalt Backup?",
@@ -648,26 +658,87 @@ private struct BackupLibrary: View {
 
 private struct BackupRow: View {
     let backup: GestaltBackup
+    let inspect: () -> Void
     let restore: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(backup.createdAt, format: .dateTime.year().month().day().hour().minute().second())
-                Text(ByteCountFormatter.string(fromByteCount: backup.byteCount, countStyle: .file))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            Button(action: inspect) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(backup.createdAt, format: .dateTime.year().month().day().hour().minute().second())
+                    Text(ByteCountFormatter.string(fromByteCount: backup.byteCount, countStyle: .file))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            Spacer()
+            .buttonStyle(.plain)
+
             ShareLink(item: backup.url) {
                 Image(systemName: "square.and.arrow.up")
             }
             .accessibilityLabel("Export Backup")
+
             Button("Restore", action: restore)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.small)
-            .accessibilityLabel("Restore Backup")
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.small)
+                .accessibilityLabel("Restore Backup")
+        }
+    }
+}
+
+private struct BackupDetailView: View {
+    let backup: GestaltBackup
+    let restore: () -> Void
+
+    private var inspection: BackupInspection {
+        GestaltBackupInspector.inspect(backup)
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Backup") {
+                    LabeledContent("Created") {
+                        Text(backup.createdAt, format: .dateTime.year().month().day().hour().minute().second())
+                    }
+                    LabeledContent("Size", value: ByteCountFormatter.string(fromByteCount: backup.byteCount, countStyle: .file))
+                    LabeledContent("Format", value: inspection.format)
+                }
+
+                Section("Integrity") {
+                    Label(
+                        inspection.isValid ? "Valid MobileGestalt backup" : "Backup failed validation",
+                        systemImage: inspection.isValid ? "checkmark.shield.fill" : "xmark.shield.fill"
+                    )
+                    .foregroundStyle(inspection.isValid ? .green : .red)
+
+                    if inspection.isValid {
+                        LabeledContent("Top-level keys", value: String(inspection.topLevelKeyCount))
+                        LabeledContent("CacheExtra keys", value: String(inspection.cacheExtraKeyCount))
+                    }
+
+                    Text(inspection.message)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
+                Section {
+                    ShareLink(item: backup.url) {
+                        Label("Export Backup", systemImage: "square.and.arrow.up")
+                    }
+
+                    Button(role: .destructive, action: restore) {
+                        Label("Restore This Backup", systemImage: "arrow.counterclockwise")
+                    }
+                    .disabled(!inspection.isValid)
+                } footer: {
+                    Text("Restoring is only enabled after this backup passes the local property-list structure check.")
+                }
+            }
+            .navigationTitle("Backup Details")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
