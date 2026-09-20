@@ -77,3 +77,9 @@ At this point the next unknown cannot be resolved statically: the post-beta-4 de
 ## Internal milestone 0.14 — Hardware-test provenance + compact summary
 
 Research Mode now gives every probe run a unique run ID and UTC timestamp, includes both in text/JSON exports, and adds a compact hardware-test summary for quickly sending the exact device/build/result without exposing MobileGestalt contents. The screen also includes an explicit four-step hardware-test protocol so unsupported builds are tested consistently. Build number is now 10. No write behavior was added or enabled.
+
+## Internal milestone 0.15 — Structured failure fingerprint
+
+The first real-device Research Mode run on iOS 27.0 build `24A437` reached the legacy ContainerManager query-result stage and returned no usable result, while recording `writeAttempted: no`. Version 0.15 turns that observation into more consistent diagnostics: reports now include a normalized failure layer, a compact build/stage fingerprint, and explicit booleans for whether a ContainerManager result or sandbox token was reached. The Objective-C probe schema is now version 3 and records its read-only mode explicitly. MobileGestalt writes remain disabled on unverified builds.
+
+Build number is now 11.
