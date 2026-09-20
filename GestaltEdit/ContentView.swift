@@ -44,6 +44,16 @@ private struct ResearchModeView: View {
     @State private var copiedReport = false
     @State private var copiedJSON = false
     @State private var copiedSummary = false
+    @State private var probeHistory: [ResearchProbeHistory.Entry] = ResearchProbeHistory.load()
+
+    private var currentBuild: String {
+        let build = GestaltAccess.currentOSBuild()
+        return build.isEmpty ? "Unknown" : build
+    }
+
+    private var latestBaseline: ResearchProbeHistory.Entry? {
+        probeHistory.first { $0.build == currentBuild }
+    }
 
     private var primitiveStatus: String {
         guard GestaltAccess.isLegacyAccessPrimitiveAvailable() else { return "Unavailable" }
@@ -76,7 +86,25 @@ private struct ResearchModeView: View {
                 Section("Device") {
                     LabeledContent("Device", value: GestaltAccess.currentDeviceIdentifier())
                     LabeledContent("iOS", value: GestaltAccess.currentOSVersionString())
-                    LabeledContent("Build", value: GestaltAccess.currentOSBuild().isEmpty ? "Unknown" : GestaltAccess.currentOSBuild())
+                    LabeledContent("Build", value: currentBuild)
+                }
+
+                if let baseline = latestBaseline {
+                    Section("Confirmed Baseline") {
+                        LabeledContent("Result", value: baseline.result)
+                        LabeledContent("Failure layer", value: baseline.fingerprint.split(separator: "|").last.map(String.init) ?? "Unknown")
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Fingerprint")
+                                .font(.caption.weight(.semibold))
+                            Text(baseline.fingerprint)
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                                .textSelection(.enabled)
+                        }
+                        Text("This build already has a saved diagnostic baseline. Repeating the same read-only probe is optional unless the app's diagnostic code changes.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 Section("Access Diagnostics") {
@@ -124,7 +152,8 @@ private struct ResearchModeView: View {
                     } label: {
                         HStack {
                             if isProbing { ProgressView().controlSize(.small) }
-                            Label("Run Read-Only Probe", systemImage: "doc.text.magnifyingglass")
+                            Label(latestBaseline == nil ? "Run Read-Only Probe" : "Run Probe Again",
+                                  systemImage: "doc.text.magnifyingglass")
                         }
                     }
                     .disabled(isProbing)
@@ -222,6 +251,7 @@ private struct ResearchModeView: View {
             let result = ResearchProbeResult(raw: raw)
             DispatchQueue.main.async {
                 probe = result
+                probeHistory = ResearchProbeHistory.record(result)
                 isProbing = false
             }
         }
