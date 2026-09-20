@@ -101,3 +101,9 @@ This begins the transition from a diagnostic prototype toward a complete app she
 The Restore tab now has a backup-details flow. Tapping a local backup opens a sheet that validates the property list locally, confirms the expected dictionary structure, reports the plist format and key counts, and disables restore when validation fails. Export remains available independently.
 
 This improves the recovery workflow without changing unsupported-build access behavior. Build number is now 14.
+
+## Internal milestone 0.19 — Review before apply
+
+The Tools tab now uses a review-first apply flow. When changes are staged, the bottom action opens a Review Changes sheet instead of writing immediately. The review lists selected tweaks, Dynamic Island subtype changes, model-name changes and the Siri AI region option, highlights catalogued higher-risk items, confirms the automatic-backup behavior and shows the exact number of pending changes before the final Apply button.
+
+This adds a deliberate confirmation step to the real product workflow while leaving the unsupported-build Research Mode write lock unchanged. Build number is now 15.

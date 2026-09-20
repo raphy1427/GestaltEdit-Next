@@ -272,6 +272,7 @@ private struct ResearchModeView: View {
 
 private struct TweakWorkbench: View {
     @EnvironmentObject private var viewModel: GestaltViewModel
+    @State private var showsApplyReview = false
 
     var body: some View {
         NavigationStack {
@@ -322,6 +323,10 @@ private struct TweakWorkbench: View {
                 if viewModel.hasStagedTweaks {
                     applyBar
                 }
+            }
+            .sheet(isPresented: $showsApplyReview) {
+                ApplyReviewView()
+                    .environmentObject(viewModel)
             }
         }
     }
@@ -430,7 +435,7 @@ private struct TweakWorkbench: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Button("Apply") { viewModel.applySelectedTweaks() }
+            Button("Review") { showsApplyReview = true }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isBusy)
         }
