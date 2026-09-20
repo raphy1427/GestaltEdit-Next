@@ -95,3 +95,9 @@ The confirmed iOS 27.0 build `24A437` baseline remains `24A437|lease|query-resul
 GestaltEdit Next now has a real in-app Status screen. On verified beta 1–4 builds it appears as a fourth tab beside Tools, Fields and Restore. Research Mode can open the same screen from an App & Compatibility Status link. The dashboard shows the app version/build, device and Darwin build, verified-write status, legacy-symbol availability, local backup count, saved research-report count and a concise safety summary.
 
 This begins the transition from a diagnostic prototype toward a complete app shell while preserving the unsupported-build write lock. Build number is now 13.
+
+## Internal milestone 0.18 — Backup integrity and restore details
+
+The Restore tab now has a backup-details flow. Tapping a local backup opens a sheet that validates the property list locally, confirms the expected dictionary structure, reports the plist format and key counts, and disables restore when validation fails. Export remains available independently.
+
+This improves the recovery workflow without changing unsupported-build access behavior. Build number is now 14.
