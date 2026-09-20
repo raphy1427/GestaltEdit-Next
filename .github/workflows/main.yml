@@ -1,0 +1,65 @@
+name: GestaltEdit Next CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - gestaltedit-next
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-build:
+    runs-on: xcode-27
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Run Research Mode safety audit
+        run: python3 tools/audit_research_mode.py
+
+      - name: Run project preflight
+        run: python3 tools/preflight.py
+
+      - name: Run probe contract tests
+        run: python3 tools/test_probe_contract.py
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build unsigned app
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project GestaltEdit.xcodeproj \
+            -scheme GestaltEdit \
+            -configuration Debug \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee "$RUNNER_TEMP/xcodebuild.log"
+
+      - name: Package unsigned IPA
+        run: |
+          APP="$RUNNER_TEMP/DerivedData/Build/Products/Debug-iphoneos/GestaltEdit.app"
+          test -d "$APP"
+          mkdir -p "$RUNNER_TEMP/Payload"
+          cp -R "$APP" "$RUNNER_TEMP/Payload/"
+          cd "$RUNNER_TEMP"
+          zip -qry GestaltEdit-Next-debug-unsigned.ipa Payload
+
+      - name: Upload build logs and unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: GestaltEdit-Next-debug
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/GestaltEdit-Next-debug-unsigned.ipa
+            ${{ runner.temp }}/xcodebuild.log
