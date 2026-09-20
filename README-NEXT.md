@@ -83,3 +83,9 @@ Research Mode now gives every probe run a unique run ID and UTC timestamp, inclu
 The first real-device Research Mode run on iOS 27.0 build `24A437` reached the legacy ContainerManager query-result stage and returned no usable result, while recording `writeAttempted: no`. Version 0.15 turns that observation into more consistent diagnostics: reports now include a normalized failure layer, a compact build/stage fingerprint, and explicit booleans for whether a ContainerManager result or sandbox token was reached. The Objective-C probe schema is now version 3 and records its read-only mode explicitly. MobileGestalt writes remain disabled on unverified builds.
 
 Build number is now 11.
+
+## Internal milestone 0.16 — Persistent hardware baseline
+
+Research Mode now saves up to 10 diagnostic summaries locally on the device using UserDefaults. When a build has already produced a baseline, the app shows the saved result and fingerprint in a dedicated Confirmed Baseline section and changes the probe action to "Run Probe Again." This prevents repeated hardware tests from being treated as required work while keeping the manual probe available after diagnostic-code changes.
+
+The confirmed iOS 27.0 build `24A437` baseline remains `24A437|lease|query-result|query-result`, with no write attempt. Build number is now 12.
