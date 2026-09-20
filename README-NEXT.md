@@ -89,3 +89,9 @@ Build number is now 11.
 Research Mode now saves up to 10 diagnostic summaries locally on the device using UserDefaults. When a build has already produced a baseline, the app shows the saved result and fingerprint in a dedicated Confirmed Baseline section and changes the probe action to "Run Probe Again." This prevents repeated hardware tests from being treated as required work while keeping the manual probe available after diagnostic-code changes.
 
 The confirmed iOS 27.0 build `24A437` baseline remains `24A437|lease|query-result|query-result`, with no write attempt. Build number is now 12.
+
+## Internal milestone 0.17 — Product status dashboard
+
+GestaltEdit Next now has a real in-app Status screen. On verified beta 1–4 builds it appears as a fourth tab beside Tools, Fields and Restore. Research Mode can open the same screen from an App & Compatibility Status link. The dashboard shows the app version/build, device and Darwin build, verified-write status, legacy-symbol availability, local backup count, saved research-report count and a concise safety summary.
+
+This begins the transition from a diagnostic prototype toward a complete app shell while preserving the unsupported-build write lock. Build number is now 13.

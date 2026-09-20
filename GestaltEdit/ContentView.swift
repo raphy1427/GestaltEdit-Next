@@ -17,6 +17,9 @@ struct ContentView: View {
 
                     BackupLibrary()
                         .tabItem { Label("Restore", systemImage: "archivebox") }
+
+                    NavigationStack { AppStatusView() }
+                        .tabItem { Label("Status", systemImage: "info.circle") }
                 }
                 .task { viewModel.load() }
             } else {
@@ -221,6 +224,14 @@ private struct ResearchModeView: View {
                         ShareLink(item: probe.textReport) {
                             Label("Share Diagnostic Report", systemImage: "square.and.arrow.up")
                         }
+                    }
+                }
+
+                Section("App") {
+                    NavigationLink {
+                        AppStatusView()
+                    } label: {
+                        Label("App & Compatibility Status", systemImage: "info.circle")
                     }
                 }
 
