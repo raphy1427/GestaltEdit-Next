@@ -425,7 +425,7 @@ private enum MobileGestaltLabError: LocalizedError {
     }
 }
 
-private enum LabEditableKind {
+private enum LabEditableKind: Equatable {
     case bool
     case string
     case integer
@@ -468,19 +468,14 @@ private struct LabFieldEditor: View {
             _boolValue = State(initialValue: false)
             _textValue = State(initialValue: String(value))
         } else if let value = value as? NSNumber {
-            if CFGetTypeID(value) == CFBooleanGetTypeID() {
-                kind = .bool
-                _boolValue = State(initialValue: value.boolValue)
-                _textValue = State(initialValue: "")
-            } else if CFNumberIsFloatType(value) {
+            let objcType = String(cString: value.objCType)
+            if objcType == "f" || objcType == "d" {
                 kind = .floatingPoint
-                _boolValue = State(initialValue: false)
-                _textValue = State(initialValue: value.stringValue)
             } else {
                 kind = .integer
-                _boolValue = State(initialValue: false)
-                _textValue = State(initialValue: value.stringValue)
             }
+            _boolValue = State(initialValue: false)
+            _textValue = State(initialValue: value.stringValue)
         } else {
             kind = .readOnly
             _boolValue = State(initialValue: false)
