@@ -56,6 +56,18 @@ struct AppStatusView: View {
                                value: GestaltAccess.isLegacyAccessPrimitiveAvailable() ? "Present" : "Unavailable")
             }
 
+            Section("Offline Lab") {
+                NavigationLink {
+                    MobileGestaltLabView()
+                } label: {
+                    Label("Open MobileGestalt Lab", systemImage: "flask")
+                }
+
+                Text("Import, inspect, edit, compare, and export a MobileGestalt plist without touching the protected device file.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Local Data") {
                 LabeledContent("Saved backups", value: backupLoadFailed ? "Unavailable" : String(backupCount))
                 LabeledContent("Research reports", value: String(ResearchProbeHistory.load().count))
@@ -67,7 +79,7 @@ struct AppStatusView: View {
             Section("Safety") {
                 Text(isVerifiedBuild
                      ? "GestaltEdit creates a backup before applying staged changes. System modifications can still require a restore if iOS becomes unstable."
-                     : "Research Mode is read-only. The tweak editor and MobileGestalt write path remain unavailable on this build.")
+                     : "Research Mode keeps the protected-device write path disabled. MobileGestalt Lab only edits files that you explicitly import and export.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
