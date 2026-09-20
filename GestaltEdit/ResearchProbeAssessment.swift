@@ -75,7 +75,7 @@ struct ResearchProbeAssessment {
             return .init(
                 title: "ContainerManager rejected the legacy query",
                 explanation: "The old traversal-style query reached ContainerManager but did not return a usable result. This is a strong indication that the original primitive is patched at the query/result layer.",
-                nextStep: "Do not bypass the app's build check. A replacement access primitive would be needed before MobileGestalt writes can be considered.",
+                nextStep: "Preserve this report and compare it with documented upstream changes or a known supported build. MobileGestalt writes remain locked on this build.",
                 severity: .blocked
             )
         case "sandbox-token":

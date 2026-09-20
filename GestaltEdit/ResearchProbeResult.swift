@@ -20,6 +20,39 @@ struct ResearchProbeResult {
     var leaseAcquired: Bool { raw["leaseAcquired"] as? Bool ?? false }
     var writeAttempted: Bool { raw["writeAttempted"] as? Bool ?? false }
 
+    var failureLayer: String {
+        if readSucceeded { return "none" }
+        if readOpenSucceeded { return "read" }
+        if leaseAcquired { return "file-open" }
+
+        switch leaseStage ?? stage {
+        case "symbol-discovery", "symbols": return "symbol-discovery"
+        case "query-create": return "query-create"
+        case "query-configure": return "query-configure"
+        case "query-result": return "query-result"
+        case "sandbox-token": return "sandbox-token"
+        case "sandbox-consume": return "sandbox-consume"
+        default: return stage
+        }
+    }
+
+    var queryResultReturned: Bool {
+        if leaseAcquired || readOpenSucceeded || readSucceeded { return true }
+        guard let leaseStage else { return false }
+        return ["sandbox-token", "sandbox-consume", "lease-active"].contains(leaseStage)
+    }
+
+    var sandboxTokenIssued: Bool {
+        if leaseAcquired || readOpenSucceeded || readSucceeded { return true }
+        guard let leaseStage else { return false }
+        return ["sandbox-consume", "lease-active"].contains(leaseStage)
+    }
+
+    var diagnosticFingerprint: String {
+        let build = string("build", fallback: GestaltAccess.currentOSBuild())
+        return [build, stage, leaseStage ?? "none", failureLayer].joined(separator: "|")
+    }
+
     var summary: String {
         if readSucceeded { return "Read-only access succeeded" }
         if readOpenSucceeded { return "Opened read-only; read failed" }
@@ -46,7 +79,11 @@ struct ResearchProbeResult {
             "Build: \(string("build", fallback: GestaltAccess.currentOSBuild()))",
             "Verified write support: no",
             "Write attempted: \(yesNo(writeAttempted))",
-            "Stage: \(stage)"
+            "Stage: \(stage)",
+            "Failure layer: \(failureLayer)",
+            "Diagnostic fingerprint: \(diagnosticFingerprint)",
+            "Query result returned: \(yesNo(queryResultReturned))",
+            "Sandbox token issued: \(yesNo(sandboxTokenIssued))"
         ]
 
         if let leaseStage { lines.append("Legacy query stage: \(leaseStage)") }
@@ -77,6 +114,10 @@ struct ResearchProbeResult {
         export["appBuild"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unknown"
         export["verifiedWriteSupport"] = false
         export["writeAttempted"] = false
+        export["failureLayer"] = failureLayer
+        export["diagnosticFingerprint"] = diagnosticFingerprint
+        export["queryResultReturned"] = queryResultReturned
+        export["sandboxTokenIssued"] = sandboxTokenIssued
 
         guard JSONSerialization.isValidJSONObject(export),
               let data = try? JSONSerialization.data(withJSONObject: export, options: [.prettyPrinted, .sortedKeys]),
@@ -94,6 +135,8 @@ struct ResearchProbeResult {
             "iOS: \(string("osVersion", fallback: GestaltAccess.currentOSVersionString()))",
             "Build: \(string("build", fallback: GestaltAccess.currentOSBuild()))",
             "Result: \(summary)",
+            "Failure layer: \(failureLayer)",
+            "Fingerprint: \(diagnosticFingerprint)",
             "Assessment: \(assessment.title)",
             "Write attempted: \(yesNo(writeAttempted))"
         ].joined(separator: "\n")

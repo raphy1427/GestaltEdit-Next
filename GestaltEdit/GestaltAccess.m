@@ -156,11 +156,13 @@ static BOOL GestaltWriteAll(int fd, NSData *data)
 - (NSDictionary<NSString *, id> *)runReadOnlyProbe
 {
     NSMutableDictionary<NSString *, id> *result = [NSMutableDictionary dictionary];
-    result[@"schemaVersion"] = @2;
+    result[@"schemaVersion"] = @3;
     result[@"timestampUTC"] = @((long long)([[NSDate date] timeIntervalSince1970] * 1000.0));
     result[@"build"] = GestaltAccess.currentOSBuild ?: @"";
     result[@"osVersion"] = GestaltAccess.currentOSVersionString ?: @"";
     result[@"device"] = GestaltAccess.currentDeviceIdentifier ?: @"Unknown";
+    result[@"probeMode"] = @"read-only";
+    result[@"verifiedWriteSupport"] = @(GestaltAccess.isRunningSupportedOS);
     result[@"symbolsAvailable"] = @(BadQueryBridgeAvailable());
     result[@"writeAttempted"] = @NO;
     result[@"leaseAcquired"] = @NO;
