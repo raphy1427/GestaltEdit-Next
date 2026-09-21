@@ -9,6 +9,13 @@ struct BackupLibraryView: View {
     @State private var exportFilename = "MobileGestalt_Backup.plist"
     @State private var showsExporter = false
     @State private var statusMessage: String?
+    @State private var backupSearchText = ""
+
+    private var visibleBackups: [GestaltBackup] {
+        let query = backupSearchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return backups }
+        return backups.filter { $0.name.localizedCaseInsensitiveContains(query) }
+    }
 
     var body: some View {
         List {
@@ -39,7 +46,7 @@ struct BackupLibraryView: View {
                         )
                     )
 
-                    ForEach(backups) { backup in
+                    ForEach(visibleBackups) { backup in
                         NavigationLink {
                             BackupDetailView(backup: backup)
                         } label: {
@@ -91,6 +98,7 @@ struct BackupLibraryView: View {
             }
         }
         .navigationTitle("Backup Library")
+        .searchable(text: $backupSearchText, prompt: "Search backup names")
         .task { reload() }
         .refreshable { reload() }
         .fileExporter(
