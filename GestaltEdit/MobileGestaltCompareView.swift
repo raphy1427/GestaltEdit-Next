@@ -120,7 +120,7 @@ struct MobileGestaltCompareView: View {
                         Text("\(file.topLevel.count) top-level · \(file.cacheExtra.count) CacheExtra")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
-                        Text("\(file.formatLabel) · \(ByteCountFormatter.string(fromByteCount: Int64(file.sourceByteCount), countStyle: .file))
+                        Text("\(file.formatLabel) · \(ByteCountFormatter.string(fromByteCount: Int64(file.sourceByteCount), countStyle: .file))")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
                     } else {
