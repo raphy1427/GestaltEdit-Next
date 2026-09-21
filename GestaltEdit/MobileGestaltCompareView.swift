@@ -229,9 +229,14 @@ struct MobileGestaltCompareView: View {
     private var differencesSection: some View {
         Section(showUnchanged ? "Fields" : "Differences") {
             if filteredDiff.isEmpty {
+                let hasActiveFilters = !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    || selectedSection != .all
+                    || onlyChangedValues
+                    || selectedKinds != Set([.changed, .added, .removed])
+                    || showUnchanged
                 Label(
-                    searchText.isEmpty ? "No differences found" : "No matching fields",
-                    systemImage: "checkmark.circle"
+                    hasActiveFilters ? "No fields match the current filters" : "No differences found",
+                    systemImage: hasActiveFilters ? "line.3.horizontal.decrease.circle" : "checkmark.circle"
                 )
                 .foregroundStyle(.secondary)
             } else {
