@@ -173,8 +173,12 @@ struct MobileGestaltLabView: View {
             LabeledContent("Structure", value: document.structureSummary)
             LabeledContent("Validation", value: document.validationSummary)
 
-            Label("Valid MobileGestalt-style plist", systemImage: "checkmark.shield.fill")
+            Label("Structurally valid imported plist", systemImage: "checkmark.shield.fill")
                 .foregroundStyle(.green)
+
+            Text("This confirms only the offline file structure. Real-device MobileGestalt compatibility is not verified by this check.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 
