@@ -165,6 +165,15 @@ struct MobileGestaltLabView: View {
             LabeledContent("Top-level keys", value: String(document.topLevelKeys.count))
             LabeledContent("CacheExtra keys", value: String(document.cacheExtraKeys.count))
             LabeledContent("Offline changes", value: String(document.changedPaths.count))
+            if !document.changedPaths.isEmpty {
+                Label("Modified copy — export is required to save these offline edits", systemImage: "pencil.and.list.clipboard")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            } else {
+                Label("No offline edits", systemImage: "checkmark.circle")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             LabeledContent("File size", value: ByteCountFormatter.string(fromByteCount: Int64(document.sourceByteCount), countStyle: .file))
             LabeledContent("CacheData", value: document.hasCacheData ? "Present" : "Not present")
             if let cacheDataKeyCount = document.cacheDataKeyCount {
