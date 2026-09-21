@@ -38,6 +38,21 @@ jobs:
       - name: Validate plist import policy
         run: python3 tools/test_plist_import_policy.py
 
+      - name: Verify manifest generator is deterministic
+        run: |
+          cp GESTALTEDIT-NEXT-MANIFEST.json "$RUNNER_TEMP/manifest-before.json"
+          python3 tools/tree_manifest.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("GESTALTEDIT-NEXT-MANIFEST.json").read_text())
+          assert m["internalVersion"] == Path("NEXT-VERSION").read_text().strip()
+          assert len(m["files"]) > 0
+          paths=[x["path"] for x in m["files"]]
+          assert len(paths) == len(set(paths))
+          print(f"PASS - generated manifest contains {len(paths)} unique project files")
+          PY
+
       - name: Show Xcode version
         run: xcodebuild -version
 
