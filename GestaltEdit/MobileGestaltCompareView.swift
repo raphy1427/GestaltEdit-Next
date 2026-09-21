@@ -11,6 +11,7 @@ struct MobileGestaltCompareView: View {
     @State private var notice: String?
     @State private var sortMode: DiffSortMode = .changeType
     @State private var selectedSection: DiffSectionFilter = .all
+    @State private var onlyChangedValues = false
 
     private var diff: [PlistDiffEntry] {
         guard let left, let right else { return [] }
@@ -23,6 +24,7 @@ struct MobileGestaltCompareView: View {
             if !showUnchanged && entry.kind == .unchanged { return false }
             if !selectedSection.matches(entry.path) { return false }
             if entry.kind != .unchanged && !selectedKinds.contains(entry.kind) { return false }
+            if onlyChangedValues && entry.kind != .changed { return false }
             guard !query.isEmpty else { return true }
             return entry.path.localizedCaseInsensitiveContains(query)
                 || entry.leftSummary.localizedCaseInsensitiveContains(query)
@@ -148,6 +150,14 @@ struct MobileGestaltCompareView: View {
             LabeledContent("Removed", value: String(removed))
             LabeledContent("Unchanged", value: String(unchanged))
             LabeledContent("Total compared", value: String(diff.count))
+
+            if changed + added + removed == 0 {
+                Label("Files match in all compared fields", systemImage: "checkmark.seal.fill")
+                    .foregroundStyle(.green)
+            } else {
+                Label("\(changed + added + removed) differences found", systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+            }
         }
     }
 
@@ -165,7 +175,9 @@ struct MobileGestaltCompareView: View {
                 }
             }
 
+            Toggle("Only value changes", isOn: $onlyChangedValues)
             Toggle("Show unchanged fields", isOn: $showUnchanged)
+                .disabled(onlyChangedValues)
 
             ForEach([PlistDiffKind.changed, .added, .removed], id: \.rawValue) { kind in
                 Toggle(isOn: Binding(
