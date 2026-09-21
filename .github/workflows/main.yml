@@ -35,6 +35,9 @@ jobs:
       - name: Validate plist edge cases
         run: python3 tools/test_plist_edge_cases.py
 
+      - name: Validate plist import policy
+        run: python3 tools/test_plist_import_policy.py
+
       - name: Show Xcode version
         run: xcodebuild -version
 
