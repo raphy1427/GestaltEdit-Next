@@ -156,6 +156,7 @@ struct MobileGestaltLabView: View {
                 LabeledContent("CacheData keys", value: String(cacheDataKeyCount))
             }
             LabeledContent("Structure", value: document.structureSummary)
+            LabeledContent("Validation", value: document.validationSummary)
 
             Label("Valid MobileGestalt-style plist", systemImage: "checkmark.shield.fill")
                 .foregroundStyle(.green)
