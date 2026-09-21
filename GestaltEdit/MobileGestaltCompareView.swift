@@ -123,6 +123,9 @@ struct MobileGestaltCompareView: View {
                         Text("\(file.formatLabel) · \(ByteCountFormatter.string(fromByteCount: Int64(file.sourceByteCount), countStyle: .file))")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
+                        Text(file.cacheDataSummary)
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
                     } else {
                         Text("Tap to import a plist")
                             .font(.caption)
@@ -318,6 +321,15 @@ private struct ComparedPlist {
     let cacheExtra: [String: Any]
     let sourceByteCount: Int
     let format: PropertyListSerialization.PropertyListFormat
+
+    var cacheDataKeyCount: Int? {
+        (topLevel["CacheData"] as? [String: Any])?.count
+    }
+
+    var cacheDataSummary: String {
+        guard let count = cacheDataKeyCount else { return "CacheData not present" }
+        return "CacheData · \(count) keys"
+    }
 
     var formatLabel: String {
         switch format {
