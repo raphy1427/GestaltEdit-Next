@@ -54,6 +54,12 @@ struct AppStatusView: View {
                 LabeledContent("Write support", value: isVerifiedBuild ? "Verified" : "Disabled")
                 LabeledContent("Legacy symbols",
                                value: GestaltAccess.isLegacyAccessPrimitiveAvailable() ? "Present" : "Unavailable")
+
+                NavigationLink {
+                    SafetyChecklistView()
+                } label: {
+                    Label("Run Safety Check", systemImage: "checklist.checked")
+                }
             }
 
             Section("Offline Lab") {
