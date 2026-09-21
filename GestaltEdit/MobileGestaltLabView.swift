@@ -94,6 +94,11 @@ struct MobileGestaltLabView: View {
         }
         .navigationTitle("MobileGestalt Lab")
         .searchable(text: $searchText, prompt: "Search keys or values")
+        .onChange(of: document?.changedPaths.count ?? 0) { _, count in
+            if count == 0 && statusMessage == "All offline changes were reset." {
+                return
+            }
+        }
         .toolbar {
             if document != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -212,8 +217,13 @@ struct MobileGestaltLabView: View {
     ) -> some View {
         Section(title) {
             if keys.isEmpty {
-                Text("No Results")
-                    .foregroundStyle(.secondary)
+                ContentUnavailableView(
+                    searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "No Fields" : "No Matching Fields",
+                    systemImage: searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "tray" : "magnifyingglass",
+                    description: searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        ? Text("This section does not contain any fields.")
+                        : Text("Try a different key or value search.")
+                )
             } else {
                 ForEach(keys, id: \.self) { key in
                     let route = LabFieldRoute(section: section, key: key)
