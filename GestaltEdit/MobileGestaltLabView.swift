@@ -7,6 +7,7 @@ struct MobileGestaltLabView: View {
     @State private var showsImporter = false
     @State private var showsExporter = false
     @State private var exportDocument: PlistExportDocument?
+    @State private var showsResetConfirmation = false
     @State private var activeField: LabFieldRoute?
     @State private var statusMessage: String?
 
@@ -64,9 +65,8 @@ struct MobileGestaltLabView: View {
                         Label("Export Modified Plist", systemImage: "square.and.arrow.up")
                     }
 
-                    Button {
-                        self.document = document.resetChanges()
-                        statusMessage = "All offline changes were reset."
+                    Button(role: .destructive) {
+                        showsResetConfirmation = true
                     } label: {
                         Label("Reset Offline Changes", systemImage: "arrow.counterclockwise")
                     }
@@ -105,6 +105,21 @@ struct MobileGestaltLabView: View {
                     .accessibilityLabel("Import Another Plist")
                 }
             }
+        }
+        .confirmationDialog(
+            "Reset all offline changes?",
+            isPresented: $showsResetConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Reset Changes", role: .destructive) {
+                if let current = document {
+                    document = current.resetChanges()
+                    statusMessage = "All offline changes were reset."
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This only resets edits in the imported copy. It does not change anything on the device.")
         }
         .fileImporter(
             isPresented: $showsImporter,
