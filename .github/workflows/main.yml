@@ -32,6 +32,9 @@ jobs:
       - name: Validate synthetic plist fixtures
         run: python3 tools/test_plist_fixtures.py
 
+      - name: Validate synthetic fixture provenance
+        run: python3 tools/test_fixture_provenance.py
+
       - name: Validate synthetic fixture diff contract
         run: python3 tools/test_fixture_diff_contract.py
 
