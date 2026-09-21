@@ -211,6 +211,23 @@ struct MobileGestaltCompareView: View {
             Toggle("Show unchanged fields", isOn: $showUnchanged)
                 .disabled(onlyChangedValues)
 
+            Button("Reset View Filters") {
+                selectedSection = .all
+                sortMode = .changeType
+                onlyChangedValues = false
+                showUnchanged = false
+                selectedKinds = [.changed, .added, .removed]
+                searchText = ""
+            }
+            .disabled(
+                selectedSection == .all
+                    && sortMode == .changeType
+                    && !onlyChangedValues
+                    && !showUnchanged
+                    && selectedKinds == Set([.changed, .added, .removed])
+                    && searchText.isEmpty
+            )
+
             ForEach([PlistDiffKind.changed, .added, .removed], id: \.rawValue) { kind in
                 Toggle(isOn: Binding(
                     get: { selectedKinds.contains(kind) },
