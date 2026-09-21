@@ -151,6 +151,7 @@ struct MobileGestaltLabView: View {
             LabeledContent("CacheExtra keys", value: String(document.cacheExtraKeys.count))
             LabeledContent("Offline changes", value: String(document.changedPaths.count))
             LabeledContent("File size", value: ByteCountFormatter.string(fromByteCount: Int64(document.sourceByteCount), countStyle: .file))
+            LabeledContent("CacheData", value: document.hasCacheData ? "Present" : "Not present")
 
             Label("Valid MobileGestalt-style plist", systemImage: "checkmark.shield.fill")
                 .foregroundStyle(.green)
@@ -329,6 +330,10 @@ private struct MobileGestaltLabDocument {
         @unknown default:
             return "Unknown"
         }
+    }
+
+    var hasCacheData: Bool {
+        current["CacheData"] is [String: Any]
     }
 
     var cacheExtraKeys: [String] {
