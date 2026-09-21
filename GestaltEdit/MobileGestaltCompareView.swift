@@ -12,6 +12,7 @@ struct MobileGestaltCompareView: View {
     @State private var sortMode: DiffSortMode = .changeType
     @State private var selectedSection: DiffSectionFilter = .all
     @State private var onlyChangedValues = false
+    @State private var showsClearConfirmation = false
 
     private var diff: [PlistDiffEntry] {
         guard let left, let right else { return [] }
@@ -69,6 +70,16 @@ struct MobileGestaltCompareView: View {
                 }
             }
 
+            if left != nil || right != nil {
+                Section("Actions") {
+                    Button(role: .destructive) {
+                        showsClearConfirmation = true
+                    } label: {
+                        Label("Clear Imported Plists", systemImage: "trash")
+                    }
+                }
+            }
+
             if let notice {
                 Section("Status") {
                     Text(notice)
@@ -78,6 +89,21 @@ struct MobileGestaltCompareView: View {
             }
         }
         .navigationTitle("Compare Plists")
+        .confirmationDialog(
+            "Clear imported plists?",
+            isPresented: $showsClearConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Clear Both Files", role: .destructive) {
+                left = nil
+                right = nil
+                searchText = ""
+                notice = "Imported comparison files were cleared."
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes only the imported copies from this comparison screen. It does not delete files from your device.")
+        }
         .searchable(text: $searchText, prompt: "Search changed keys or values")
         .fileImporter(
             isPresented: Binding(
