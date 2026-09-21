@@ -46,6 +46,14 @@ struct BackupLibraryView: View {
                         )
                     )
 
+                    if visibleBackups.isEmpty && !backupSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        ContentUnavailableView(
+                            "No Matching Backups",
+                            systemImage: "magnifyingglass",
+                            description: Text("Try a different backup name.")
+                        )
+                    }
+
                     ForEach(visibleBackups) { backup in
                         NavigationLink {
                             BackupDetailView(backup: backup)
