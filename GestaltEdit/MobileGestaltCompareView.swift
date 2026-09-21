@@ -182,6 +182,7 @@ struct MobileGestaltCompareView: View {
             LabeledContent("Removed", value: String(removed))
             LabeledContent("Unchanged", value: String(unchanged))
             LabeledContent("Total compared", value: String(diff.count))
+            LabeledContent("Visible results", value: String(filteredDiff.count))
 
             if changed + added + removed == 0 {
                 Label("Files match in all compared fields", systemImage: "checkmark.seal.fill")
