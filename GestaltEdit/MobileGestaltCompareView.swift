@@ -350,11 +350,16 @@ private struct ComparedPlist {
         }
 
         var format = PropertyListSerialization.PropertyListFormat.binary
-        let root = try PropertyListSerialization.propertyList(
-            from: data,
-            options: [],
-            format: &format
-        )
+        let root: Any
+        do {
+            root = try PropertyListSerialization.propertyList(
+                from: data,
+                options: [],
+                format: &format
+            )
+        } catch {
+            throw ComparePlistError.invalidPropertyList
+        }
 
         guard let dictionary = root as? [String: Any] else {
             throw ComparePlistError.notDictionary
@@ -380,6 +385,7 @@ private enum ComparePlistError: LocalizedError {
     case fileTooLarge(Int)
     case notDictionary
     case missingCacheExtra
+    case invalidPropertyList
 
     var errorDescription: String? {
         switch self {
@@ -388,6 +394,8 @@ private enum ComparePlistError: LocalizedError {
         case .fileTooLarge(let byteCount):
             let size = ByteCountFormatter.string(fromByteCount: Int64(byteCount), countStyle: .file)
             return "The selected plist is \(size). For safety, comparison imports are limited to 32 MB."
+        case .invalidPropertyList:
+            return "The selected file could not be read as a property list. Make sure it is a valid XML or binary plist."
         case .notDictionary:
             return "The selected plist does not have a dictionary at its top level."
         case .missingCacheExtra:
