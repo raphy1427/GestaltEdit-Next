@@ -21,6 +21,18 @@ struct MobileGestaltLabView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("Research Tools") {
+                NavigationLink {
+                    MobileGestaltCompareView()
+                } label: {
+                    Label("Compare Two Plists", systemImage: "arrow.left.arrow.right")
+                }
+
+                Text("Compare two MobileGestalt files to find added, removed, changed, and unchanged fields.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
             if let document {
                 summarySection(document)
                 changesSection(document)
