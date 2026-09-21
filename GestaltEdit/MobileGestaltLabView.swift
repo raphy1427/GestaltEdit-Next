@@ -445,6 +445,17 @@ private struct MobileGestaltLabDocument {
             options: 0
         )
 
+        var verifiedFormat = outputFormat
+        let verifiedRoot = try PropertyListSerialization.propertyList(
+            from: data,
+            options: [],
+            format: &verifiedFormat
+        )
+        guard let verified = verifiedRoot as? [String: Any],
+              verified["CacheExtra"] is [String: Any] else {
+            throw MobileGestaltLabError.exportValidationFailed
+        }
+
         return PlistExportDocument(data: data)
     }
 
@@ -482,6 +493,7 @@ private enum MobileGestaltLabError: LocalizedError {
     case emptyFile
     case fileTooLarge(Int)
     case invalidPropertyList
+    case exportValidationFailed
 
     var errorDescription: String? {
         switch self {
@@ -491,6 +503,8 @@ private enum MobileGestaltLabError: LocalizedError {
             return "The selected plist does not contain a CacheExtra dictionary, so it does not look like a MobileGestalt cache file."
         case .emptyFile:
             return "The selected file is empty."
+        case .exportValidationFailed:
+            return "The modified plist could not be verified after export, so no file was created."
         case .invalidPropertyList:
             return "The selected file could not be read as a property list. Make sure it is a valid XML or binary plist."
         case .fileTooLarge(let byteCount):
