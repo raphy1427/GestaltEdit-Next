@@ -32,6 +32,9 @@ jobs:
       - name: Validate synthetic plist fixtures
         run: python3 tools/test_plist_fixtures.py
 
+      - name: Validate plist edge cases
+        run: python3 tools/test_plist_edge_cases.py
+
       - name: Show Xcode version
         run: xcodebuild -version
 
