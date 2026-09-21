@@ -30,6 +30,15 @@ struct BackupLibraryView: View {
                 }
             } else {
                 Section("Saved Backups") {
+                    LabeledContent("Backups", value: String(backups.count))
+                    LabeledContent(
+                        "Total size",
+                        value: ByteCountFormatter.string(
+                            fromByteCount: backups.reduce(Int64(0)) { $0 + $1.byteCount },
+                            countStyle: .file
+                        )
+                    )
+
                     ForEach(backups) { backup in
                         NavigationLink {
                             BackupDetailView(backup: backup)
