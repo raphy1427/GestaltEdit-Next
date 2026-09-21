@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AppStatusView: View {
     @State private var backupCount = 0
+    @State private var backupBytes: Int64 = 0
     @State private var backupLoadFailed = false
 
     private var appVersion: String {
@@ -86,6 +87,13 @@ struct AppStatusView: View {
                     }
                 }
 
+                if !backupLoadFailed {
+                    LabeledContent(
+                        "Backup storage",
+                        value: ByteCountFormatter.string(fromByteCount: backupBytes, countStyle: .file)
+                    )
+                }
+
                 LabeledContent("Research reports", value: String(ResearchProbeHistory.load().count))
                 Text("Backups and research summaries stay on this device unless you explicitly share or export them.")
                     .font(.footnote)
@@ -107,9 +115,13 @@ struct AppStatusView: View {
 
     private func refreshLocalData() {
         do {
-            backupCount = try GestaltBackupStore.list().count
+            let backups = try GestaltBackupStore.list()
+            backupCount = backups.count
+            backupBytes = backups.reduce(0) { $0 + $1.byteCount }
             backupLoadFailed = false
         } catch {
+            backupCount = 0
+            backupBytes = 0
             backupLoadFailed = true
         }
     }
