@@ -9,6 +9,7 @@ struct MobileGestaltCompareView: View {
     @State private var showUnchanged = false
     @State private var selectedKinds: Set<PlistDiffKind> = [.changed, .added, .removed]
     @State private var notice: String?
+    @State private var sortMode: DiffSortMode = .changeType
 
     private var diff: [PlistDiffEntry] {
         guard let left, let right else { return [] }
@@ -17,13 +18,20 @@ struct MobileGestaltCompareView: View {
 
     private var filteredDiff: [PlistDiffEntry] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        return diff.filter { entry in
+        let filtered = diff.filter { entry in
             if !showUnchanged && entry.kind == .unchanged { return false }
             if entry.kind != .unchanged && !selectedKinds.contains(entry.kind) { return false }
             guard !query.isEmpty else { return true }
             return entry.path.localizedCaseInsensitiveContains(query)
                 || entry.leftSummary.localizedCaseInsensitiveContains(query)
                 || entry.rightSummary.localizedCaseInsensitiveContains(query)
+        }
+
+        switch sortMode {
+        case .changeType:
+            return filtered
+        case .fieldName:
+            return filtered.sorted { $0.path.localizedCaseInsensitiveCompare($1.path) == .orderedAscending }
         }
     }
 
@@ -143,6 +151,12 @@ struct MobileGestaltCompareView: View {
 
     private var optionsSection: some View {
         Section("View") {
+            Picker("Sort", selection: $sortMode) {
+                ForEach(DiffSortMode.allCases) { mode in
+                    Text(mode.title).tag(mode)
+                }
+            }
+
             Toggle("Show unchanged fields", isOn: $showUnchanged)
 
             ForEach([PlistDiffKind.changed, .added, .removed], id: \.rawValue) { kind in
@@ -223,6 +237,19 @@ struct MobileGestaltCompareView: View {
             notice = "Imported \(url.lastPathComponent)."
         } catch {
             notice = error.localizedDescription
+        }
+    }
+}
+
+private enum DiffSortMode: String, CaseIterable, Identifiable {
+    case changeType
+    case fieldName
+
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .changeType: return "Change Type"
+        case .fieldName: return "Field Name"
         }
     }
 }
