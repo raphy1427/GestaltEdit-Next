@@ -208,6 +208,15 @@ struct MobileGestaltCompareView: View {
                 }
             }
 
+            Button("Reset View Filters") {
+                selectedSection = .all
+                sortMode = .changeType
+                onlyChangedValues = false
+                showUnchanged = false
+                selectedKinds = [.changed, .added, .removed]
+                searchText = ""
+            }
+
             Toggle("Only value changes", isOn: $onlyChangedValues)
             Toggle("Show unchanged fields", isOn: $showUnchanged)
                 .disabled(onlyChangedValues)
