@@ -1,9 +1,14 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct BackupLibraryView: View {
     @State private var backups: [GestaltBackup] = []
     @State private var loadError: String?
     @State private var pendingDeletion: GestaltBackup?
+    @State private var exportDocument: BackupExportDocument?
+    @State private var exportFilename = "MobileGestalt_Backup.plist"
+    @State private var showsExporter = false
+    @State private var statusMessage: String?
 
     var body: some View {
         List {
@@ -43,6 +48,14 @@ struct BackupLibraryView: View {
                                     .foregroundStyle(.tertiary)
                             }
                         }
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            Button {
+                                prepareExport(backup)
+                            } label: {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                            }
+                            .tint(.blue)
+                        }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
                                 pendingDeletion = backup
@@ -54,7 +67,15 @@ struct BackupLibraryView: View {
                 }
 
                 Section {
-                    Text("Deleting a backup only removes GestaltEdit's local copy. It does not modify MobileGestalt or any other system file.")
+                    Text("Export creates a copy you choose where to save or share. Deleting a backup only removes GestaltEdit's local copy. Neither action modifies MobileGestalt or another system file.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if let statusMessage {
+                Section("Status") {
+                    Text(statusMessage)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -63,6 +84,20 @@ struct BackupLibraryView: View {
         .navigationTitle("Backup Library")
         .task { reload() }
         .refreshable { reload() }
+        .fileExporter(
+            isPresented: $showsExporter,
+            document: exportDocument,
+            contentType: .propertyList,
+            defaultFilename: exportFilename
+        ) { result in
+            switch result {
+            case .success:
+                statusMessage = "Backup export completed."
+            case .failure(let error):
+                statusMessage = error.localizedDescription
+            }
+            exportDocument = nil
+        }
         .confirmationDialog(
             "Delete this backup?",
             isPresented: Binding(
@@ -92,6 +127,17 @@ struct BackupLibraryView: View {
         }
     }
 
+    private func prepareExport(_ backup: GestaltBackup) {
+        do {
+            exportDocument = BackupExportDocument(data: try GestaltBackupStore.data(for: backup))
+            exportFilename = backup.url.lastPathComponent
+            statusMessage = nil
+            showsExporter = true
+        } catch {
+            statusMessage = "Could not prepare this backup for export: \(error.localizedDescription)"
+        }
+    }
+
     private func deletePendingBackup() {
         guard let backup = pendingDeletion else { return }
         pendingDeletion = nil
@@ -99,6 +145,7 @@ struct BackupLibraryView: View {
         do {
             try GestaltBackupStore.delete(backup)
             reload()
+            statusMessage = "Backup deleted."
         } catch {
             loadError = error.localizedDescription
         }
@@ -107,6 +154,10 @@ struct BackupLibraryView: View {
 
 private struct BackupDetailView: View {
     let backup: GestaltBackup
+
+    @State private var exportDocument: BackupExportDocument?
+    @State private var showsExporter = false
+    @State private var exportError: String?
 
     private var inspection: BackupInspection {
         GestaltBackupInspector.inspect(backup)
@@ -141,13 +192,66 @@ private struct BackupDetailView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("Actions") {
+                Button {
+                    prepareExport()
+                } label: {
+                    Label("Export Backup Copy", systemImage: "square.and.arrow.up")
+                }
+
+                if let exportError {
+                    Text(exportError)
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                }
+            }
+
             Section("Safety") {
-                Text("This screen only reads GestaltEdit's saved local backup. It does not access or write the protected MobileGestalt file.")
+                Text("This screen only reads GestaltEdit's saved local backup. Exporting creates a separate copy and does not access or write the protected MobileGestalt file.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         }
         .navigationTitle("Backup Details")
         .navigationBarTitleDisplayMode(.inline)
+        .fileExporter(
+            isPresented: $showsExporter,
+            document: exportDocument,
+            contentType: .propertyList,
+            defaultFilename: backup.url.lastPathComponent
+        ) { result in
+            if case .failure(let error) = result {
+                exportError = error.localizedDescription
+            }
+            exportDocument = nil
+        }
+    }
+
+    private func prepareExport() {
+        do {
+            exportDocument = BackupExportDocument(data: try GestaltBackupStore.data(for: backup))
+            exportError = nil
+            showsExporter = true
+        } catch {
+            exportError = error.localizedDescription
+        }
+    }
+}
+
+private struct BackupExportDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.propertyList] }
+
+    let data: Data
+
+    init(data: Data) {
+        self.data = data
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        data = configuration.file.regularFileContents ?? Data()
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: data)
     }
 }
