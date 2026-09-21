@@ -13,6 +13,7 @@ struct MobileGestaltCompareView: View {
     @State private var selectedSection: DiffSectionFilter = .all
     @State private var onlyChangedValues = false
     @State private var showsClearConfirmation = false
+    @State private var pendingReplacementSide: CompareSide?
 
     private var diff: [PlistDiffEntry] {
         guard let left, let right else { return [] }
@@ -105,6 +106,24 @@ struct MobileGestaltCompareView: View {
             Text("This removes only the imported copies from this comparison screen. It does not delete files from your device.")
         }
         .searchable(text: $searchText, prompt: "Search changed keys or values")
+        .confirmationDialog(
+            "Replace imported plist?",
+            isPresented: Binding(
+                get: { pendingReplacementSide != nil },
+                set: { if !$0 { pendingReplacementSide = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Choose Replacement") {
+                importingSide = pendingReplacementSide
+                pendingReplacementSide = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingReplacementSide = nil
+            }
+        } message: {
+            Text("The selected comparison slot will be replaced. Original files on your device are not changed.")
+        }
         .fileImporter(
             isPresented: Binding(
                 get: { importingSide != nil },
@@ -129,7 +148,11 @@ struct MobileGestaltCompareView: View {
     @ViewBuilder
     private func importRow(side: CompareSide, file: ComparedPlist?) -> some View {
         Button {
-            importingSide = side
+            if file == nil {
+                importingSide = side
+            } else {
+                pendingReplacementSide = side
+            }
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: file == nil ? "doc.badge.plus" : "doc.text")
