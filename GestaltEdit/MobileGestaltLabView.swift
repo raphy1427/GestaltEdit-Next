@@ -156,6 +156,7 @@ struct MobileGestaltLabView: View {
                 LabeledContent("CacheData keys", value: String(cacheDataKeyCount))
             }
             LabeledContent("Structure", value: document.structureSummary)
+            LabeledContent("Validation", value: document.validationSummary)
 
             Label("Valid MobileGestalt-style plist", systemImage: "checkmark.shield.fill")
                 .foregroundStyle(.green)
@@ -342,6 +343,10 @@ private struct MobileGestaltLabDocument {
 
     var cacheDataKeyCount: Int? {
         (current["CacheData"] as? [String: Any])?.count
+    }
+
+    var validationSummary: String {
+        hasCacheData ? "Ready for structural comparison" : "CacheExtra-only sample"
     }
 
     var structureSummary: String {
