@@ -94,11 +94,6 @@ struct MobileGestaltLabView: View {
         }
         .navigationTitle("MobileGestalt Lab")
         .searchable(text: $searchText, prompt: "Search keys or values")
-        .onChange(of: document?.changedPaths.count ?? 0) { _, count in
-            if count == 0 && statusMessage == "All offline changes were reset." {
-                return
-            }
-        }
         .toolbar {
             if document != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
