@@ -120,6 +120,9 @@ struct MobileGestaltCompareView: View {
                         Text("\(file.topLevel.count) top-level · \(file.cacheExtra.count) CacheExtra")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
+                        Text(ByteCountFormatter.string(fromByteCount: Int64(file.sourceByteCount), countStyle: .file))
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
                     } else {
                         Text("Tap to import a plist")
                             .font(.caption)
@@ -313,6 +316,7 @@ private struct ComparedPlist {
     let name: String
     let topLevel: [String: Any]
     let cacheExtra: [String: Any]
+    let sourceByteCount: Int
 
     init(name: String, data: Data) throws {
         guard !data.isEmpty else {
@@ -340,6 +344,7 @@ private struct ComparedPlist {
 
         self.name = name
         self.cacheExtra = cache
+        self.sourceByteCount = data.count
 
         var top = dictionary
         top.removeValue(forKey: "CacheExtra")
