@@ -345,6 +345,10 @@ private struct MobileGestaltLabDocument {
         (current["CacheData"] as? [String: Any])?.count
     }
 
+    var validationSummary: String {
+        hasCacheData ? "Ready for structural comparison" : "CacheExtra-only sample"
+    }
+
     var structureSummary: String {
         let cacheData = hasCacheData ? "CacheData" : "no CacheData"
         return "CacheExtra + \(cacheData)"
