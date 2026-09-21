@@ -150,6 +150,7 @@ struct MobileGestaltLabView: View {
             LabeledContent("Top-level keys", value: String(document.topLevelKeys.count))
             LabeledContent("CacheExtra keys", value: String(document.cacheExtraKeys.count))
             LabeledContent("Offline changes", value: String(document.changedPaths.count))
+            LabeledContent("File size", value: ByteCountFormatter.string(fromByteCount: Int64(document.sourceByteCount), countStyle: .file))
 
             Label("Valid MobileGestalt-style plist", systemImage: "checkmark.shield.fill")
                 .foregroundStyle(.green)
@@ -285,6 +286,7 @@ private struct MobileGestaltLabDocument {
     private let original: [String: Any]
     private(set) var current: [String: Any]
     let format: PropertyListSerialization.PropertyListFormat
+    let sourceByteCount: Int
 
     init(data: Data) throws {
         guard !data.isEmpty else {
@@ -313,6 +315,7 @@ private struct MobileGestaltLabDocument {
         original = dictionary
         current = dictionary
         format = detectedFormat
+        sourceByteCount = data.count
     }
 
     var formatName: String {
