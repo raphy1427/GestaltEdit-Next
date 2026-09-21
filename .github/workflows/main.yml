@@ -35,6 +35,9 @@ jobs:
       - name: Validate synthetic fixture diff contract
         run: python3 tools/test_fixture_diff_contract.py
 
+      - name: Validate synthetic fixture diff symmetry
+        run: python3 tools/test_fixture_diff_symmetry.py
+
       - name: Validate plist edge cases
         run: python3 tools/test_plist_edge_cases.py
 
