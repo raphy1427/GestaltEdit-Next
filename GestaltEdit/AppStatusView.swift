@@ -75,7 +75,17 @@ struct AppStatusView: View {
             }
 
             Section("Local Data") {
-                LabeledContent("Saved backups", value: backupLoadFailed ? "Unavailable" : String(backupCount))
+                NavigationLink {
+                    BackupLibraryView()
+                } label: {
+                    HStack {
+                        Label("Backup Library", systemImage: "archivebox")
+                        Spacer()
+                        Text(backupLoadFailed ? "Unavailable" : String(backupCount))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
                 LabeledContent("Research reports", value: String(ResearchProbeHistory.load().count))
                 Text("Backups and research summaries stay on this device unless you explicitly share or export them.")
                     .font(.footnote)
