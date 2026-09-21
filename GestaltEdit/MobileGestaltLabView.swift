@@ -462,6 +462,7 @@ private enum MobileGestaltLabError: LocalizedError {
     case missingCacheExtra
     case emptyFile
     case fileTooLarge(Int)
+    case invalidPropertyList
 
     var errorDescription: String? {
         switch self {
@@ -471,6 +472,8 @@ private enum MobileGestaltLabError: LocalizedError {
             return "The selected plist does not contain a CacheExtra dictionary, so it does not look like a MobileGestalt cache file."
         case .emptyFile:
             return "The selected file is empty."
+        case .invalidPropertyList:
+            return "The selected file could not be read as a property list. Make sure it is a valid XML or binary plist."
         case .fileTooLarge(let byteCount):
             let megabytes = Double(byteCount) / 1_048_576
             return String(format: "The selected plist is %.1f MB. The offline Lab currently limits imports to 32 MB.", megabytes)
