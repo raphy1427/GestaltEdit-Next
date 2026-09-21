@@ -120,7 +120,7 @@ struct MobileGestaltCompareView: View {
                         Text("\(file.topLevel.count) top-level · \(file.cacheExtra.count) CacheExtra")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
-                        Text(ByteCountFormatter.string(fromByteCount: Int64(file.sourceByteCount), countStyle: .file))
+                        Text("\(file.formatLabel) · \(ByteCountFormatter.string(fromByteCount: Int64(file.sourceByteCount), countStyle: .file))
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
                     } else {
@@ -317,6 +317,16 @@ private struct ComparedPlist {
     let topLevel: [String: Any]
     let cacheExtra: [String: Any]
     let sourceByteCount: Int
+    let format: PropertyListSerialization.PropertyListFormat
+
+    var formatLabel: String {
+        switch format {
+        case .binary: return "Binary"
+        case .xml: return "XML"
+        case .openStep: return "OpenStep"
+        @unknown default: return "Unknown"
+        }
+    }
 
     init(name: String, data: Data) throws {
         guard !data.isEmpty else {
@@ -345,6 +355,7 @@ private struct ComparedPlist {
         self.name = name
         self.cacheExtra = cache
         self.sourceByteCount = data.count
+        self.format = format
 
         var top = dictionary
         top.removeValue(forKey: "CacheExtra")
