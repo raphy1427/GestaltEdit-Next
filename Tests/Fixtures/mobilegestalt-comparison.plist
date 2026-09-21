@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>FixtureVersion</key><string>0.31</string>
+  <key>CacheData</key>
+  <dict>
+    <key>ExampleModel</key><string>GestaltEdit-Test-Device</string>
+    <key>ExampleBuild</key><string>TEST-ONLY</string>
+  </dict>
+  <key>CacheExtra</key>
+  <dict>
+    <key>BooleanExample</key><true/>
+    <key>StringExample</key><string>comparison</string>
+    <key>IntegerExample</key><integer>32</integer>
+    <key>RealExample</key><real>3.14</real>
+    <key>DateExample</key><date>2026-09-21T12:00:00Z</date>
+    <key>DataExample</key><data>R2VzdGFsdEVkaXQ=</data>
+    <key>ArrayExample</key><array><string>alpha</string><string>beta</string></array>
+    <key>DictionaryExample</key><dict><key>Nested</key><string>value</string></dict>
+    <key>AddedInComparison</key><string>new</string>
+    <key>ChangedInComparison</key><string>after</string>
+  </dict>
+</dict>
+</plist>
