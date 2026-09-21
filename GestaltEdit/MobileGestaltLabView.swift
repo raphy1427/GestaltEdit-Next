@@ -287,6 +287,14 @@ private struct MobileGestaltLabDocument {
     let format: PropertyListSerialization.PropertyListFormat
 
     init(data: Data) throws {
+        guard !data.isEmpty else {
+            throw MobileGestaltLabError.emptyFile
+        }
+        let maximumImportBytes = 32 * 1024 * 1024
+        guard data.count <= maximumImportBytes else {
+            throw MobileGestaltLabError.fileTooLarge(data.count)
+        }
+
         var detectedFormat = PropertyListSerialization.PropertyListFormat.binary
         let root = try PropertyListSerialization.propertyList(
             from: data,
@@ -426,6 +434,8 @@ private struct MobileGestaltLabDocument {
 private enum MobileGestaltLabError: LocalizedError {
     case notDictionary
     case missingCacheExtra
+    case emptyFile
+    case fileTooLarge(Int)
 
     var errorDescription: String? {
         switch self {
@@ -433,6 +443,11 @@ private enum MobileGestaltLabError: LocalizedError {
             return "The selected file is a property list, but its top level is not a dictionary."
         case .missingCacheExtra:
             return "The selected plist does not contain a CacheExtra dictionary, so it does not look like a MobileGestalt cache file."
+        case .emptyFile:
+            return "The selected file is empty."
+        case .fileTooLarge(let byteCount):
+            let megabytes = Double(byteCount) / 1_048_576
+            return String(format: "The selected plist is %.1f MB. The offline Lab currently limits imports to 32 MB.", megabytes)
         }
     }
 }
