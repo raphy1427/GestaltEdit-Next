@@ -315,6 +315,14 @@ private struct ComparedPlist {
     let cacheExtra: [String: Any]
 
     init(name: String, data: Data) throws {
+        guard !data.isEmpty else {
+            throw ComparePlistError.emptyFile
+        }
+        let maximumImportBytes = 32 * 1024 * 1024
+        guard data.count <= maximumImportBytes else {
+            throw ComparePlistError.fileTooLarge(data.count)
+        }
+
         var format = PropertyListSerialization.PropertyListFormat.binary
         let root = try PropertyListSerialization.propertyList(
             from: data,
@@ -340,11 +348,18 @@ private struct ComparedPlist {
 }
 
 private enum ComparePlistError: LocalizedError {
+    case emptyFile
+    case fileTooLarge(Int)
     case notDictionary
     case missingCacheExtra
 
     var errorDescription: String? {
         switch self {
+        case .emptyFile:
+            return "The selected plist is empty."
+        case .fileTooLarge(let byteCount):
+            let size = ByteCountFormatter.string(fromByteCount: Int64(byteCount), countStyle: .file)
+            return "The selected plist is \(size). For safety, comparison imports are limited to 32 MB."
         case .notDictionary:
             return "The selected plist does not have a dictionary at its top level."
         case .missingCacheExtra:
