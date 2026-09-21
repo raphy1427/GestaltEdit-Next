@@ -164,6 +164,7 @@ struct MobileGestaltLabView: View {
             LabeledContent("Format", value: document.formatName)
             LabeledContent("Top-level keys", value: String(document.topLevelKeys.count))
             LabeledContent("CacheExtra keys", value: String(document.cacheExtraKeys.count))
+            LabeledContent("Total browsable fields", value: String(document.cacheExtraKeys.count + document.topLevelKeys.count))
             LabeledContent("Offline changes", value: String(document.changedPaths.count))
             if !document.changedPaths.isEmpty {
                 Label("Modified copy — export is required to save these offline edits", systemImage: "pencil.and.list.clipboard")
