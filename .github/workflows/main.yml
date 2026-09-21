@@ -29,6 +29,9 @@ jobs:
       - name: Run probe contract tests
         run: python3 tools/test_probe_contract.py
 
+      - name: Validate synthetic plist fixtures
+        run: python3 tools/test_plist_fixtures.py
+
       - name: Show Xcode version
         run: xcodebuild -version
 
