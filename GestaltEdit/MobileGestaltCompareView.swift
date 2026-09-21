@@ -7,6 +7,7 @@ struct MobileGestaltCompareView: View {
     @State private var importingSide: CompareSide?
     @State private var searchText = ""
     @State private var showUnchanged = false
+    @State private var selectedKinds: Set<PlistDiffKind> = [.changed, .added, .removed]
     @State private var notice: String?
 
     private var diff: [PlistDiffEntry] {
@@ -18,6 +19,7 @@ struct MobileGestaltCompareView: View {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         return diff.filter { entry in
             if !showUnchanged && entry.kind == .unchanged { return false }
+            if entry.kind != .unchanged && !selectedKinds.contains(entry.kind) { return false }
             guard !query.isEmpty else { return true }
             return entry.path.localizedCaseInsensitiveContains(query)
                 || entry.leftSummary.localizedCaseInsensitiveContains(query)
@@ -142,6 +144,19 @@ struct MobileGestaltCompareView: View {
     private var optionsSection: some View {
         Section("View") {
             Toggle("Show unchanged fields", isOn: $showUnchanged)
+
+            ForEach([PlistDiffKind.changed, .added, .removed], id: \.rawValue) { kind in
+                Toggle(isOn: Binding(
+                    get: { selectedKinds.contains(kind) },
+                    set: { enabled in
+                        if enabled { selectedKinds.insert(kind) }
+                        else { selectedKinds.remove(kind) }
+                    }
+                )) {
+                    Label(kind.label, systemImage: kind.symbol)
+                        .foregroundStyle(kind.tint)
+                }
+            }
         }
     }
 
