@@ -10,6 +10,7 @@ struct MobileGestaltCompareView: View {
     @State private var selectedKinds: Set<PlistDiffKind> = [.changed, .added, .removed]
     @State private var notice: String?
     @State private var sortMode: DiffSortMode = .changeType
+    @State private var selectedSection: DiffSectionFilter = .all
 
     private var diff: [PlistDiffEntry] {
         guard let left, let right else { return [] }
@@ -20,6 +21,7 @@ struct MobileGestaltCompareView: View {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered = diff.filter { entry in
             if !showUnchanged && entry.kind == .unchanged { return false }
+            if !selectedSection.matches(entry.path) { return false }
             if entry.kind != .unchanged && !selectedKinds.contains(entry.kind) { return false }
             guard !query.isEmpty else { return true }
             return entry.path.localizedCaseInsensitiveContains(query)
@@ -151,6 +153,12 @@ struct MobileGestaltCompareView: View {
 
     private var optionsSection: some View {
         Section("View") {
+            Picker("Section", selection: $selectedSection) {
+                ForEach(DiffSectionFilter.allCases) { section in
+                    Text(section.title).tag(section)
+                }
+            }
+
             Picker("Sort", selection: $sortMode) {
                 ForEach(DiffSortMode.allCases) { mode in
                     Text(mode.title).tag(mode)
@@ -237,6 +245,29 @@ struct MobileGestaltCompareView: View {
             notice = "Imported \(url.lastPathComponent)."
         } catch {
             notice = error.localizedDescription
+        }
+    }
+}
+
+private enum DiffSectionFilter: String, CaseIterable, Identifiable {
+    case all
+    case cacheExtra
+    case topLevel
+
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .all: return "All Fields"
+        case .cacheExtra: return "CacheExtra"
+        case .topLevel: return "Top Level"
+        }
+    }
+
+    func matches(_ path: String) -> Bool {
+        switch self {
+        case .all: return true
+        case .cacheExtra: return path.hasPrefix("CacheExtra.")
+        case .topLevel: return !path.hasPrefix("CacheExtra.")
         }
     }
 }
