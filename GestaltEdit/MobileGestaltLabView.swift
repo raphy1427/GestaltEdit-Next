@@ -8,6 +8,7 @@ struct MobileGestaltLabView: View {
     @State private var showsExporter = false
     @State private var exportDocument: PlistExportDocument?
     @State private var showsResetConfirmation = false
+    @State private var showsReplaceConfirmation = false
     @State private var activeField: LabFieldRoute?
     @State private var statusMessage: String?
 
@@ -98,7 +99,7 @@ struct MobileGestaltLabView: View {
             if document != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        showsImporter = true
+                        showsReplaceConfirmation = true
                     } label: {
                         Image(systemName: "doc.badge.plus")
                     }
@@ -120,6 +121,18 @@ struct MobileGestaltLabView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This only resets edits in the imported copy. It does not change anything on the device.")
+        }
+        .confirmationDialog(
+            "Import another plist?",
+            isPresented: $showsReplaceConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Choose Another Plist") {
+                showsImporter = true
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Importing another file replaces the current imported copy and any unsaved offline edits on this screen.")
         }
         .fileImporter(
             isPresented: $showsImporter,
